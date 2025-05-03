@@ -16,4 +16,4 @@ CREATE TABLE pedidos (
   FOREIGN KEY (filme_id) REFERENCES filmes(id)
 );
 
-INSERT INTO filmes (nome) VALUES ('Minicraft'), ('Jumanji'), ('The Chosen'), ('Não Entre'), ('Pecadores');
+INSERT INTO filmes (nome) VALUES ('Minecraft'), ('Jumanji'), ('The Chosen'), ('Não Entre'), ('Pecadores');

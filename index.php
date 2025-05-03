@@ -27,6 +27,7 @@ $filmes = $conn->query("SELECT * FROM filmes");
 <html>
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" href="style.css">
   <title>Cinema</title>
 </head>
 <body>
