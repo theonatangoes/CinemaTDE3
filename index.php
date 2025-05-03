@@ -1,9 +1,17 @@
 <?php
 include "conexao.php";
 
-$filme = $_GET['filme'] ?? 1;
-$data = $_GET['data'] ?? date('Y-m-d');
-$horario = $_GET['horario'] ?? '14:10:00';
+if (isset($_GET['error'])) {
+  ?>
+  <script>
+      alert('<?php echo $_GET['error']; ?>');
+  </script>
+  <?php
+}
+
+$filme = $_GET['filme'] ?? '';
+$data = $_GET['data'] ?? '';
+$horario = $_GET['horario'] ?? '';
 
 $sql = "SELECT assento FROM pedidos WHERE filme_id = '$filme' AND data = '$data' AND horario = '$horario'";
 $result = $conn->query($sql);
@@ -23,7 +31,9 @@ $filmes = $conn->query("SELECT * FROM filmes");
 </head>
 <body>
 <h1>FapFlix</h1>
-
+<a href="admin_filmes.php">
+  <button type="button">🎬 Gerenciar Filmes</button>
+</a>
 <form method="GET">
   Filme:
   <select name="filme">
@@ -47,7 +57,7 @@ $filmes = $conn->query("SELECT * FROM filmes");
 <h2>Assento</h2>
 
 <form method="POST" action="pedido.php">
-  <input type="hidden" name="filme" value="<?= $filme ?>">
+  <input type="hidden" name="filme" value="<?= htmlspecialchars($filme) ?>">
   <input type="hidden" name="data" value="<?= $data ?>">
   <input type="hidden" name="horario" value="<?= $horario ?>">
   

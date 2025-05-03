@@ -1,6 +1,14 @@
 <?php
 include "conexao.php";
 
+// Check if the "Atualizar" button was clicked
+if ($_POST['filme'] == '' || $_POST['data'] == '' || $_POST['horario'] == '') {
+  $error = 'Por favor, atualize os dados antes de comprar o ticket.';
+  // Redirect back to the index page with the error message
+  header('Location: index.php?error=' . urlencode($error));
+  exit;
+}
+
 $nome = mysqli_real_escape_string($conn, $_POST['nome_cliente']);
 $filme = intval($_POST['filme']);
 $data = $_POST['data'];
