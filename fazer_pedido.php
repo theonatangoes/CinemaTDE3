@@ -1,34 +1,88 @@
 <?php
 include 'conexao.php';
 
-$nome = $_POST['nome'];
-$cpf = $_POST['cpf'];
-$filme = $_POST['filme'];
-$data = $_POST['data'];
-$horario = $_POST['horario'];
-$assentos = $_POST['assentos'];
+// Função para gerar os assentos (como já está no seu código)
+function gerarAssentos() {
+    $letras = ['A'];
+    $numeros = range(1, 10);
+    $assentos = [];
+    foreach ($letras as $l) {
+        foreach ($numeros as $n) {
+            $assentos[] = $l . $n;
+        }
+    }
+    return $assentos;
+}
 
-$query = "SELECT COUNT(*) as total FROM pedidos WHERE cpf=? AND filme=? AND data=? AND horario=?";
-$stmt = $conn->prepare($query);
+// Recebe os dados do formulário
+$nome = $_POST['nome'] ?? '';
+$cpf = $_POST['cpf'] ?? '';
+$filme = $_POST['filme'] ?? '';
+$data = $_POST['data'] ?? '';
+$horario = $_POST['horario'] ?? '';
+$assentos = $_POST['assentos'] ?? [];
+
+$assentosDisponiveis = gerarAssentos(); // Gera todos os assentos
+
+// Verifica se a data é válida (não é passada)
+$hoje = date("Y-m-d");
+if ($data < $hoje) {
+    echo "Não é possível fazer reservas para sessões em datas passadas.";
+    exit;
+}
+
+// Verifica os assentos já reservados para a sessão selecionada
+$assentosOcupados = [];
+if ($filme && $data && $horario) {
+    $stmt = $conn->prepare("SELECT assento FROM pedidos WHERE filme = ? AND data = ? AND horario = ?");
+    $stmt->bind_param("sss", $filme, $data, $horario);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    while ($row = $result->fetch_assoc()) {
+        $assentosOcupados[] = $row['assento'];
+    }
+    // Libera o resultado da consulta
+    $stmt->free_result();  // Limpar o resultado antes de preparar a próxima consulta
+    $stmt->close();  // Fechar o statement
+}
+
+// Verifica a quantidade de assentos selecionados
+if (count($assentos) > 4) {
+    echo "Você pode escolher no máximo 4 assentos por sessão.";
+    exit;
+}
+
+// Verifica se o CPF já fez reserva para o mesmo filme, data e horário
+$stmt = $conn->prepare("SELECT COUNT(*) FROM pedidos WHERE cpf = ? AND filme = ? AND data = ? AND horario = ?");
 $stmt->bind_param("ssss", $cpf, $filme, $data, $horario);
 $stmt->execute();
-$result = $stmt->get_result();
-$row = $result->fetch_assoc();
+$stmt->bind_result($reservasExistentes);
+$stmt->fetch();
+$stmt->free_result();  // Libera os resultados da consulta
+$stmt->close();  // Fechar o statement
 
-if ($row['total'] + count($assentos) > 4) {
-    die("Erro: Limite de 4 assentos por CPF excedido.");
+if ($reservasExistentes > 0) {
+    echo "Você já fez uma reserva para esta sessão.";
+    exit;
 }
 
+// Verifica se algum dos assentos selecionados já foi reservado
 foreach ($assentos as $assento) {
-    $check = $conn->prepare("SELECT * FROM pedidos WHERE filme=? AND data=? AND horario=? AND assento=?");
-    $check->bind_param("ssss", $filme, $data, $horario, $assento);
-    $check->execute();
-    $res = $check->get_result();
-    if ($res->num_rows == 0) {
-        $insert = $conn->prepare("INSERT INTO pedidos (nome, cpf, filme, data, horario, assento) VALUES (?, ?, ?, ?, ?, ?)");
-        $insert->bind_param("ssssss", $nome, $cpf, $filme, $data, $horario, $assento);
-        $insert->execute();
+    if (in_array($assento, $assentosOcupados)) {
+        echo "O assento $assento já foi reservado.";
+        exit;
     }
 }
-header("Location: ver_pedidos.php");
+
+// Se o número de assentos for válido e não houver problemas, insere os dados no banco
+if (empty($erro)) {
+    foreach ($assentos as $assento) {
+        $stmt = $conn->prepare("INSERT INTO pedidos (nome, cpf, filme, data, horario, assento) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $nome, $cpf, $filme, $data, $horario, $assento);
+        $stmt->execute();
+    }
+    echo "Pedido realizado com sucesso!";
+    // Aqui, você pode redirecionar ou renderizar uma página de sucesso, se necessário
+}
 ?>

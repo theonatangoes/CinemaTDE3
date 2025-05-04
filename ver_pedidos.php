@@ -10,6 +10,7 @@ $pedidos = $conn->query("SELECT * FROM pedidos ORDER BY data DESC");
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { border: 1px solid #ccc; padding: 10px; }
         th { background-color: #eee; }
+        button:disabled { background-color: #ddd; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -35,5 +36,9 @@ $pedidos = $conn->query("SELECT * FROM pedidos ORDER BY data DESC");
         </tr>
         <?php endwhile; ?>
     </table>
+
+    <!-- Botão Voltar -->
+    <br>
+    <a href="index.php"><button>Voltar</button></a>
 </body>
 </html>

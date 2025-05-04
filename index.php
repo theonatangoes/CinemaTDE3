@@ -1,6 +1,7 @@
 <?php
 include 'conexao.php';
 
+// Função para gerar os assentos
 function gerarAssentos() {
     $letras = ['A'];
     $numeros = range(1, 10);
@@ -14,6 +15,20 @@ function gerarAssentos() {
 }
 
 $assentos = gerarAssentos();
+
+// Verificar os assentos ocupados no banco
+$ocupados = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $filme = $_POST['filme'];
+    $data = $_POST['data'];
+    $horario = $_POST['horario'];
+
+    $sql = "SELECT assento FROM pedidos WHERE filme = '$filme' AND data = '$data' AND horario = '$horario'";
+    $result = $conn->query($sql);
+    while ($row = $result->fetch_assoc()) {
+        $ocupados[] = $row['assento'];
+}
+}
 ?>
 <!DOCTYPE html>
 <html>
@@ -47,7 +62,10 @@ $assentos = gerarAssentos();
         <h3>Escolha até 4 assentos:</h3>
         <div class="assentos">
         <?php foreach ($assentos as $a): ?>
-            <label><input type="checkbox" name="assentos[]" value="<?= $a ?>"> <?= $a ?></label>
+            <label>
+                <input type="checkbox" name="assentos[]" value="<?= $a ?>" 
+                    <?php if (in_array($a, $ocupados)) echo 'disabled class="ocupado"'; ?>> <?= $a ?>
+            </label>
         <?php endforeach; ?>
         </div><br>
 
