@@ -1,11 +1,11 @@
 <?php
-$host = "localhost";
-$user = "root";
-$senha = "";
-$banco = "cinema";
+$host = 'localhost';
+$user = 'root';
+$pass = '';
+$db = 'cinema';
 
-$conn = new mysqli($host, $user, $senha, $banco);
+$conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
-    die("Erro de conexão: " . $conn->connect_error);
+    die('Erro na conexão: ' . $conn->connect_error);
 }
 ?>
