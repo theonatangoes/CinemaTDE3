@@ -43,8 +43,8 @@ if ($filme && $data && $horario) {
         $assentosOcupados[] = $row['assento'];
     }
     // Libera o resultado da consulta
-    $stmt->free_result();  // Limpar o resultado antes de preparar a próxima consulta
-    $stmt->close();  // Fechar o statement
+    $stmt->free_result();
+    $stmt->close();
 }
 
 // Verifica a quantidade de assentos selecionados
@@ -59,8 +59,8 @@ $stmt->bind_param("ssss", $cpf, $filme, $data, $horario);
 $stmt->execute();
 $stmt->bind_result($reservasExistentes);
 $stmt->fetch();
-$stmt->free_result();  // Libera os resultados da consulta
-$stmt->close();  // Fechar o statement
+$stmt->free_result();
+$stmt->close();
 
 if ($reservasExistentes > 0) {
     echo "Você já fez uma reserva para esta sessão.";
@@ -70,19 +70,22 @@ if ($reservasExistentes > 0) {
 // Verifica se algum dos assentos selecionados já foi reservado
 foreach ($assentos as $assento) {
     if (in_array($assento, $assentosOcupados)) {
-        echo "O assento $assento já foi reservado.";
+        echo "O assento $assento já foi reservado. Por favor, escolha outro assento.";
         exit;
     }
 }
 
 // Se o número de assentos for válido e não houver problemas, insere os dados no banco
-if (empty($erro)) {
+try {
     foreach ($assentos as $assento) {
         $stmt = $conn->prepare("INSERT INTO pedidos (nome, cpf, filme, data, horario, assento) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssss", $nome, $cpf, $filme, $data, $horario, $assento);
         $stmt->execute();
     }
     echo "Pedido realizado com sucesso!";
-    // Aqui, você pode redirecionar ou renderizar uma página de sucesso, se necessário
+    // Redirecionamento ou renderização de página de sucesso
+    // header('Location: sucesso.php');
+} catch (Exception $e) {
+    echo "Erro ao realizar o pedido: " . $e->getMessage();
 }
 ?>
