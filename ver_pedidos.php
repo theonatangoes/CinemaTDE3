@@ -24,7 +24,7 @@ $pedidos = $conn->query("SELECT * FROM pedidos ORDER BY data DESC");
             <td><?= $row['nome'] ?></td>
             <td><?= $row['cpf'] ?></td>
             <td><?= $row['filme'] ?></td>
-            <td><?= $row['data'] ?></td>
+            <td><?= date('d-m-Y', strtotime($row['data'])) ?></td>
             <td><?= $row['horario'] ?></td>
             <td><?= $row['assento'] ?></td>
             <td>
