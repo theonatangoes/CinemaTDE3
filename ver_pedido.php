@@ -6,20 +6,12 @@ $db = new Database();
 $conn = $db->conectar();
 $pedido = new Pedido($conn);
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $cpf = $_POST['cpf'];
-    $pedidos = $pedido->listarPorCPF($cpf);
-}
+// Agora lista todos os pedidos automaticamente
+$pedidos = $pedido->listarTodos();
 ?>
 
-<form method="post">
-    <label>CPF:</label>
-    <input type="text" name="cpf" required>
-    <button type="submit">Buscar</button>
-</form>
-
+<h2>Pedidos</h2>
 <?php if (!empty($pedidos)): ?>
-    <h2>Pedidos</h2>
     <ul>
         <?php foreach ($pedidos as $p): ?>
             <li><?= $p['titulo'] ?> - <?= $p['data'] ?> - <?= $p['horario'] ?> - <?= $p['assento'] ?>
@@ -27,5 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </li>
         <?php endforeach; ?>
     </ul>
+<?php else: ?>
+    <p>Nenhum pedido encontrado.</p>
 <?php endif; ?>
 <a href="index.php">Voltar</a>
