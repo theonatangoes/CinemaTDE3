@@ -1,76 +1,49 @@
 <?php
-include 'conexao.php';
+require_once 'classes/Database.php';
+require_once 'classes/Filme.php';
 
-// Função para gerar os assentos
-function gerarAssentos() {
-    $letras = ['A'];
-    $numeros = range(1, 10);
-    $assentos = [];
-    foreach ($letras as $l) {
-        foreach ($numeros as $n) {
-            $assentos[] = $l . $n;
-        }
-    }
-    return $assentos;
-}
-
-$assentos = gerarAssentos();
-
-// Verificar os assentos ocupados no banco
-$ocupados = [];
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $filme = $_POST['filme'];
-    $data = $_POST['data'];
-    $horario = $_POST['horario'];
-
-    $sql = "SELECT assento FROM pedidos WHERE filme = '$filme' AND data = '$data' AND horario = '$horario'";
-    $result = $conn->query($sql);
-    while ($row = $result->fetch_assoc()) {
-        $ocupados[] = $row['assento'];
-}
-}
+$db = new Database();
+$conn = $db->conectar();
+$filme = new Filme($conn);
+$filmes = $filme->listar();
+$hoje = date('Y-m-d');
+$horarios = ['14:00', '18:00', '20:00'];
 ?>
+
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-    <title>FapFlix - Reservas</title>
-    <style>
-        body { font-family: Arial; padding: 20px; }
-        .assentos label { display: inline-block; width: 60px; }
-        .ocupado { background-color: #ccc; pointer-events: none; }
-    </style>
+    <meta charset="UTF-8">
+    <title>FAP Flix</title>
+    
 </head>
 <body>
-    <h1>FapFlix - Sistema de Cinema</h1>
-    <form method="POST" action="fazer_pedido.php">
-        <label>Nome:</label><br><input type="text" name="nome" required><br>
-        <label>CPF:</label><br><input type="text" name="cpf" maxlength="11" required><br>
-        <label>Filme:</label><br>
-        <select name="filme" required>
-            <option value="Minicraft">Minicraft</option>
-            <option value="Jumanji">Jumanji</option>
-            <option value="The Chosen">The Chosen</option>
-        </select><br>
-        <label>Data:</label><br><input type="date" name="data" required><br>
-        <label>Horário:</label><br>
-        <select name="horario" required>
-            <option value="14:00">14:00</option>
-            <option value="16:00">16:00</option>
-            <option value="18:00">18:00</option>
-        </select><br><br>
-
-        <h3>Escolha até 4 assentos:</h3>
-        <div class="assentos">
-        <?php foreach ($assentos as $a): ?>
-            <label>
-                <input type="checkbox" name="assentos[]" value="<?= $a ?>" 
-                    <?php if (in_array($a, $ocupados)) echo 'disabled class="ocupado"'; ?>> <?= $a ?>
-            </label>
+<h1>FAP Flix</h1>
+<h2>Fazer Pedido</h2>
+<form action="fazer_pedido.php" method="post">
+    <label>Nome:</label><input type="text" name="nome" required><br>
+    <label>CPF:</label><input type="text" name="cpf" maxlength="11" required><br>
+    <label>Filme:</label>
+    <select name="filme_id" required>
+        <?php foreach ($filmes as $f): ?>
+            <option value="<?= $f['id'] ?>"><?= $f['titulo'] ?></option>
         <?php endforeach; ?>
-        </div><br>
+    </select><br>
+    <label>Data:</label><input type="date" name="data" min="<?= $hoje ?>" required><br>
+    <label>Horário:</label>
+    <select name="horario" required>
+        <?php foreach ($horarios as $h): ?>
+            <option value="<?= $h ?>"><?= $h ?></option>
+        <?php endforeach; ?>
+    </select><br>
+    <label>Assentos (máx 4):</label><br>
+    <?php for ($i = 1; $i <= 10; $i++): ?>
+        <input type="checkbox" name="assentos[]" value="A<?= $i ?>">A<?= $i ?>
+    <?php endfor; ?><br>
+    <button type="submit">Confirmar Pedido</button>
+</form>
 
-        <button type="submit">Reservar</button>
-        <a href="ver_pedidos.php"><button type="button">Ver Pedidos</button></a>
-    </form>
+<br><a href="ver_pedido.php"><button>Ver Pedidos</button></a>
+<br><a href="gerenciar_filmes.php"><button>Gerenciar Filmes</button></a>
 </body>
 </html>

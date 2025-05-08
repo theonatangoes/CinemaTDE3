@@ -1,25 +1,12 @@
 <?php
-include 'conexao.php';
+require_once 'classes/Database.php';
+require_once 'classes/Pedido.php';
 
-$id = $_POST['id'];
+$db = new Database();
+$conn = $db->conectar();
+$pedido = new Pedido($conn);
 
-// Buscar o assento do pedido que será removido
-$stmt = $conn->prepare("SELECT assento, filme, data, horario FROM pedidos WHERE id = ?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
-$pedido = $result->fetch_assoc();
-
-if ($pedido) {
-    // Excluir o pedido
-    $stmt = $conn->prepare("DELETE FROM pedidos WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-
-    // Redireciona para a página de pedidos
-    header("Location: ver_pedidos.php");
-    exit;
-} else {
-    echo "Pedido não encontrado.";
+if (isset($_GET['id'])) {
+    $pedido->removerPorId($_GET['id']);
 }
-?>
+header("Location: ver_pedido.php");
