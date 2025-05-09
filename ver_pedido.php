@@ -14,7 +14,13 @@ $pedidos = $pedido->listarTodos();
 <?php if (!empty($pedidos)): ?>
     <ul>
         <?php foreach ($pedidos as $p): ?>
-            <li><?= $p['titulo'] ?> - <?= $p['data'] ?> - <?= $p['horario'] ?> - <?= $p['assento'] ?>
+            <li>
+                <strong>Nome:</strong> <?= htmlspecialchars($p['nome_cliente']) ?> |
+                <strong>CPF:</strong> <?= htmlspecialchars($p['cpf']) ?> |
+                <strong>Filme:</strong> <?= htmlspecialchars($p['titulo']) ?> |
+                <strong>Data:</strong> <?= date('d-m-Y', strtotime($p['data'])) ?> |
+                <strong>Horário:</strong> <?= htmlspecialchars($p['horario']) ?> |
+                <strong>Assento:</strong> <?= htmlspecialchars($p['assento']) ?>
                 <a href="remover_pedido.php?id=<?= $p['id'] ?>">Remover</a>
             </li>
         <?php endforeach; ?>
