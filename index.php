@@ -15,10 +15,29 @@ $horarios = ['14:00', '18:00', '20:00'];
 <head>
     <meta charset="UTF-8">
     <title>FAP Flix</title>
-    
+    <style>
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .header img {
+            height: 110px;
+            width: auto;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+    </style>
 </head>
 <body>
-<h1>FAP Flix</h1>
+
+<div class="header">
+    <img src="FapFlix.png" alt="Logo FAP Flix">
+</div>
+
 <h2>Fazer Pedido</h2>
 <form action="fazer_pedido.php" method="post">
     <label>Nome:</label><input type="text" name="nome" required><br>
@@ -45,5 +64,6 @@ $horarios = ['14:00', '18:00', '20:00'];
 
 <br><a href="ver_pedido.php"><button>Ver Pedidos</button></a>
 <br><a href="gerenciar_filmes.php"><button>Gerenciar Filmes</button></a>
+
 </body>
 </html>
