@@ -12,10 +12,21 @@ $filmes = $filmeObj->listar();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nome = $_POST['nome'];
     $cpf = $_POST['cpf'];
+
+    // Validação de CPF: apenas números e 11 dígitos
+    if (!preg_match('/^\d{11}$/', $cpf)) {
+        die("Erro: CPF inválido. Digite exatamente 11 números.");
+    }
+
     $filme_id = $_POST['filme_id'];
     $data = $_POST['data'];
     $horario = $_POST['horario'];
     $assentos = $_POST['assentos'] ?? [];
+
+    // Verificação de pelo menos um assento
+    if (empty($assentos)) {
+        die("Erro: Selecione pelo menos um assento.");
+    }
 
     if (strtotime($data) < strtotime(date('Y-m-d'))) {
         die('Erro: Data inválida.');
@@ -28,8 +39,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 ?>
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>FAP Flix</title>
+    <style>
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .header img {
+            height: 110px;
+            width: auto;
+        }
+        h1 {
+            margin: 0;
+            font-size: 2em;
+        }
+    </style>
+</head>
+<body>
 
-<h2>FAP Flix</h2>
+<div class="header">
+    <img src="FapFlix.png" alt="Logo FAP Flix">
+</div>
 <h3>Fazer Pedido</h3>
 
 <form method="post">
