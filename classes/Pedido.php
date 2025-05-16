@@ -6,7 +6,7 @@ class Pedido {
         $this->conn = $db;
     }
 
-    public function fazer($nome, $cpf, $filme_id, $data, $horario, $assentos) {
+    public function fazer($nome, $cpf, $filme_id, $data, $horario, $assentos, $forma_pagamento = null) {
         // Verifica se a quantidade de assentos não ultrapassa o limite de 4
         if (count($assentos) > 4) return false;
 
@@ -29,16 +29,17 @@ class Pedido {
             }
         }
 
-        // Insere os pedidos com o nome, CPF, filme, data, horário e assento
+        // Insere os pedidos com o nome, CPF, filme, data, horário, assento e forma de pagamento
         foreach ($assentos as $assento) {
-            $stmt = $this->conn->prepare("INSERT INTO pedidos (nome_cliente, cpf, filme_id, data, horario, assento) VALUES (:nome, :cpf, :filme_id, :data, :horario, :assento)");
+            $stmt = $this->conn->prepare("INSERT INTO pedidos (nome_cliente, cpf, filme_id, data, horario, assento, forma_pagamento) VALUES (:nome, :cpf, :filme_id, :data, :horario, :assento, :forma_pagamento)");
             $stmt->execute([
                 ':nome' => $nome,
                 ':cpf' => $cpf,
                 ':filme_id' => $filme_id,
                 ':data' => $data,
                 ':horario' => $horario,
-                ':assento' => $assento
+                ':assento' => $assento,
+                ':forma_pagamento' => $forma_pagamento
             ]);
         }
 

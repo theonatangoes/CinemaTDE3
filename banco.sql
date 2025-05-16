@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS pedidos (
     data DATE NOT NULL,
     horario TIME NOT NULL,
     assento VARCHAR(10) NOT NULL,
+    forma_pagamento VARCHAR(20) NOT NULL,
     FOREIGN KEY (filme_id) REFERENCES filmes(id)
 );
 

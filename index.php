@@ -65,6 +65,14 @@ $horarios = ['14:00', '18:00', '20:00'];
         <input type="checkbox" name="assentos[]" value="A<?= $i ?>">A<?= $i ?>
     <?php endfor; ?><br>
     <p></p>
+    <label>Forma de Pagamento:</label>
+    <select name="forma_pagamento" required>
+        <option value="PIX">PIX</option>
+        <option value="Cartão de Crédito">Cartão de Crédito</option>
+        <option value="Cartão de Débito">Cartão de Débito</option>
+        <option value="Dinheiro">Dinheiro</option>
+    </select><br>
+    <p></p>
     <button type="submit">Confirmar Pedido</button>
 </form>
 

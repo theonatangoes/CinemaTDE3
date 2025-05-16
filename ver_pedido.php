@@ -20,7 +20,8 @@ $pedidos = $pedido->listarTodos();
                 <strong>Filme:</strong> <?= htmlspecialchars($p['titulo']) ?> |
                 <strong>Data:</strong> <?= date('d-m-Y', strtotime($p['data'])) ?> |
                 <strong>Horário:</strong> <?= htmlspecialchars($p['horario']) ?> |
-                <strong>Assento:</strong> <?= htmlspecialchars($p['assento']) ?>
+                <strong>Assento:</strong> <?= htmlspecialchars($p['assento']) ?> |
+                <strong>Forma de Pagamento:</strong> <?= htmlspecialchars($p['forma_pagamento']) ?>
                 <a href="remover_pedido.php?id=<?= $p['id'] ?>">Remover</a>
             </li>
         <?php endforeach; ?>

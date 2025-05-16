@@ -12,6 +12,7 @@ $filmes = $filmeObj->listar();
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nome = $_POST['nome'];
     $cpf = $_POST['cpf'];
+    $forma_pagamento = $_POST['forma_pagamento'];
 
     // Validação de CPF: apenas números e 11 dígitos
     if (!preg_match('/^\d{11}$/', $cpf)) {
@@ -32,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         die('Erro: Data inválida.');
     }
 
-    if ($pedido->fazer($nome, $cpf, $filme_id, $data, $horario, $assentos)) {
+    if ($pedido->fazer($nome, $cpf, $filme_id, $data, $horario, $assentos, $forma_pagamento)) {
         echo "Pedido realizado com sucesso!";
     } else {
         echo "Erro ao realizar pedido (limite de cadeiras pode ter sido excedido).";
@@ -89,9 +90,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <label><input type="checkbox" name="assentos[]" value="A<?= $i ?>">A<?= $i ?></label>
     <?php endforeach; ?>
     <br><br>
+    Forma de Pagamento:
+    <select name="forma_pagamento" required>
+        <option value="PIX">PIX</option>
+        <option value="Cartão de Crédito">Cartão de Crédito</option>
+        <option value="Cartão de Débito">Cartão de Débito</option>
+        <option value="Dinheiro">Dinheiro</option>
+    </select><br><br>
     <button type="submit">Confirmar Pedido</button>
 </form>
 
 <br>
 <a href="ver_pedido.php"><button>Ver Pedidos</button></a><br>
 <a href="gerenciar_filmes.php"><button>Gerenciar Filmes</button></a>
+</body>
+</html>
