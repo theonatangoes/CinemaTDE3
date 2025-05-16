@@ -19,6 +19,6 @@ CREATE TABLE IF NOT EXISTS pedidos (
 );
 
 INSERT INTO filmes (titulo) VALUES 
-('Minicraft'), 
+('Minecraft'), 
 ('The Chosen'), 
 ('Jumanji');
