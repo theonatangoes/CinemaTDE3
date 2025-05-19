@@ -8,6 +8,9 @@ $filme = new Filme($conn);
 $filmes = $filme->listar();
 $hoje = date('Y-m-d');
 $horarios = ['14:00', '18:00', '20:00'];
+
+// Get the current time
+$currentTime = date('H:i');
 ?>
 
 <!DOCTYPE html>
@@ -31,6 +34,61 @@ $horarios = ['14:00', '18:00', '20:00'];
             font-size: 2em;
         }
     </style>
+    <script>
+        // Função para verificar os horários disponíveis com base na data selecionada
+        function checkAvailableTimes() {
+            const dateInput = document.getElementById('data');
+            const timeSelect = document.getElementById('horario');
+            const selectedDate = dateInput.value;
+            const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+            
+            // Resetar todas as opções de horário
+            for (let i = 0; i < timeSelect.options.length; i++) {
+                timeSelect.options[i].disabled = false;
+            }
+            
+            // Se for o dia de hoje, desabilitar horários que já passaram
+            if (selectedDate === today) {
+                const now = new Date();
+                const currentHour = now.getHours();
+                const currentMinute = now.getMinutes();
+                
+                for (let i = 0; i < timeSelect.options.length; i++) {
+                    const timeOption = timeSelect.options[i].value;
+                    const [hour, minute] = timeOption.split(':').map(Number);
+                    
+                    if (hour < currentHour || (hour === currentHour && minute <= currentMinute)) {
+                        timeSelect.options[i].disabled = true;
+                    }
+                }
+                
+                // Se o horário atualmente selecionado estiver desabilitado, selecione o próximo disponível
+                if (timeSelect.selectedIndex >= 0 && timeSelect.options[timeSelect.selectedIndex].disabled) {
+                    for (let i = 0; i < timeSelect.options.length; i++) {
+                        if (!timeSelect.options[i].disabled) {
+                            timeSelect.selectedIndex = i;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Executar quando o documento estiver carregado
+        document.addEventListener('DOMContentLoaded', function() {
+            const dateInput = document.getElementById('data');
+            
+            // Aplicar restrição de data mínima
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.setAttribute('min', today);
+            
+            // Verificar horários disponíveis na carga da página
+            checkAvailableTimes();
+            
+            // Adicionar listener para mudança de data
+            dateInput.addEventListener('change', checkAvailableTimes);
+        });
+    </script>
 </head>
 <body>
 
@@ -51,10 +109,10 @@ $horarios = ['14:00', '18:00', '20:00'];
         <?php endforeach; ?>
     </select><br>
     <p></p>
-    <label>Data:</label><input type="date" name="data" min="<?= $hoje ?>" required><br>
+    <label>Data:</label><input type="date" name="data" id="data" min="<?= $hoje ?>" required><br>
     <p></p>
     <label>Horário:</label>
-    <select name="horario" required>
+    <select name="horario" id="horario" required>
         <?php foreach ($horarios as $h): ?>
             <option value="<?= $h ?>"><?= $h ?></option>
         <?php endforeach; ?>
