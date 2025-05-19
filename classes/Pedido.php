@@ -76,5 +76,15 @@ class Pedido {
         ]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
+    public function editarPorId($id, $nome, $cpf, $forma_pagamento) {
+    $stmt = $this->conn->prepare("UPDATE pedidos SET nome_cliente = :nome, cpf = :cpf, forma_pagamento = :forma_pagamento WHERE id = :id");
+    return $stmt->execute([
+        ':nome' => $nome,
+        ':cpf' => $cpf,
+        ':forma_pagamento' => $forma_pagamento,
+        ':id' => $id
+    ]);
+}
+
 }
 ?>

@@ -23,6 +23,7 @@ $pedidos = $pedido->listarTodos();
                 <strong>Assento:</strong> <?= htmlspecialchars($p['assento']) ?> |
                 <strong>Forma de Pagamento:</strong> <?= htmlspecialchars($p['forma_pagamento']) ?>
                 <a href="remover_pedido.php?id=<?= $p['id'] ?>">Remover</a>
+                <a href="editar_pedido.php?id=<?= $p['id'] ?>">Editar</a>
             </li>
         <?php endforeach; ?>
     </ul>
@@ -30,3 +31,5 @@ $pedidos = $pedido->listarTodos();
     <p>Nenhum pedido encontrado.</p>
 <?php endif; ?>
 <a href="index.php">Voltar</a>
+
+
